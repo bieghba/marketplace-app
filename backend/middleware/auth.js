@@ -14,3 +14,13 @@ function auth(req, res, next) {
 }
 
 module.exports = auth;
+
+const auth = require("../middleware/auth");
+
+app.post("/api/listings", auth, async (req, res) => {
+  if (req.user.role !== "seller") return res.status(403).json({ error: "Not allowed" });
+  const listing = new Listing(req.body);
+  await listing.save();
+  res.json(listing);
+});
+
